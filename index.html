@@ -4,39 +4,65 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>استاد فراتی تمدید کن</title>
+
   <style>
+    @property --a1 { syntax: "<color>"; inherits: true; initial-value: #ff76c8; }
+    @property --a2 { syntax: "<color>"; inherits: true; initial-value: #7ab7ff; }
+    @property --a3 { syntax: "<color>"; inherits: true; initial-value: #8effc1; }
+    @property --glow { syntax: "<color>"; inherits: true; initial-value: rgba(255,120,200,.55); }
+    @property --glow2 { syntax: "<color>"; inherits: true; initial-value: rgba(120,170,255,.45); }
+    @property --bg1 { syntax: "<color>"; inherits: true; initial-value: #0b1023; }
+    @property --bg2 { syntax: "<color>"; inherits: true; initial-value: #1b1240; }
+    @property --a1soft { syntax: "<color>"; inherits: true; initial-value: rgba(255,118,200,.18); }
+    @property --a2soft { syntax: "<color>"; inherits: true; initial-value: rgba(122,183,255,.16); }
+    @property --a3soft { syntax: "<color>"; inherits: true; initial-value: rgba(142,255,193,.12); }
+
     :root{
       --bg1:#0b1023;
       --bg2:#1b1240;
       --stroke: rgba(255,255,255,.14);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.70);
+
       --a1:#ff76c8;
       --a2:#7ab7ff;
       --a3:#8effc1;
+      --a1soft: rgba(255,118,200,.18);
+      --a2soft: rgba(122,183,255,.16);
+      --a3soft: rgba(142,255,193,.12);
+
       --glow: rgba(255,120,200,.55);
       --glow2: rgba(120,170,255,.45);
+
       --glass-blur: 14px;
       --shadow-hero: 0 24px 70px rgba(0,0,0,.35);
       --shadow-card: 0 24px 60px rgba(0,0,0,.28);
-      --noise-opacity: .18;
+      --noise-opacity: .14;
       --ring-opacity: .55;
+
       --ui-bg1: rgba(255,255,255,.10);
       --ui-bg2: rgba(255,255,255,.06);
+
+      transition:
+        --a1 520ms ease, --a2 520ms ease, --a3 520ms ease,
+        --a1soft 520ms ease, --a2soft 520ms ease, --a3soft 520ms ease,
+        --glow 520ms ease, --glow2 520ms ease, --bg1 520ms ease, --bg2 520ms ease;
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
+
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Vazirmatn", "IRANSans", Arial, sans-serif;
       color:var(--text);
       background:
-        radial-gradient(1200px 900px at 10% 10%, rgba(122,183,255,.18), transparent 60%),
-        radial-gradient(1000px 800px at 90% 20%, rgba(255,118,200,.15), transparent 60%),
-        radial-gradient(800px 700px at 50% 90%, rgba(142,255,193,.10), transparent 60%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,.035) 0 1px, transparent 1px 72px),
+        repeating-linear-gradient(0deg, rgba(255,255,255,.030) 0 1px, transparent 1px 72px),
         linear-gradient(135deg, var(--bg1), var(--bg2));
       overflow-x:hidden;
     }
+
     body::before{
       content:"";
       position:fixed; inset:0;
@@ -44,20 +70,69 @@
       mix-blend-mode:overlay;
       opacity:var(--noise-opacity);
       pointer-events:none;
+      z-index:0;
     }
+
+    body::after{
+      content:"";
+      position:fixed;
+      inset:-25%;
+      pointer-events:none;
+      background:
+        linear-gradient(115deg, transparent 0 22%, var(--a1soft) 33%, transparent 52%),
+        linear-gradient(35deg, transparent 0 18%, var(--a2soft) 36%, transparent 58%),
+        linear-gradient(165deg, transparent 0 28%, var(--a3soft) 42%, transparent 62%);
+      filter: blur(26px);
+      opacity:.92;
+      transform: translate3d(0,0,0);
+      animation: drift 16s ease-in-out infinite;
+      z-index:0;
+    }
+
+    @keyframes drift{
+      0%{transform:translate3d(-1.0%, -0.6%, 0) rotate(-1deg)}
+      50%{transform:translate3d(1.0%, 0.6%, 0) rotate(1deg)}
+      100%{transform:translate3d(-1.0%, -0.6%, 0) rotate(-1deg)}
+    }
+
     @media (max-width: 640px){
       :root{
         --glass-blur: 6px;
         --shadow-hero: 0 16px 44px rgba(0,0,0,.30);
         --shadow-card: 0 16px 40px rgba(0,0,0,.24);
-        --noise-opacity: .10;
-        --ring-opacity: .38;
+        --noise-opacity: .08;
+        --ring-opacity: .36;
         --ui-bg1: rgba(255,255,255,.12);
         --ui-bg2: rgba(255,255,255,.08);
       }
+      body::after{ filter: blur(18px); opacity:.82; }
     }
+
     @media (prefers-reduced-motion: reduce){
+      body::after{ animation:none; }
       :root{ --ring-opacity: .18; }
+    }
+
+    .bgPattern{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      opacity:.46;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='980' height='560' viewBox='0 0 980 560'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='white' stop-opacity='.10'/%3E%3Cstop offset='1' stop-color='white' stop-opacity='.04'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cg fill='none' stroke='url(%23g)' stroke-width='1.4'%3E%3Cpath d='M-30 120 C 120 40, 240 200, 390 120 S 660 40, 840 120 S 1060 200, 1210 120'/%3E%3Cpath d='M-30 220 C 120 140, 240 300, 390 220 S 660 140, 840 220 S 1060 300, 1210 220'/%3E%3Cpath d='M-30 320 C 120 240, 240 400, 390 320 S 660 240, 840 320 S 1060 400, 1210 320'/%3E%3Cpath d='M-30 420 C 120 340, 240 500, 390 420 S 660 340, 840 420 S 1060 500, 1210 420'/%3E%3C/g%3E%3Cg fill='white' fill-opacity='.06'%3E%3Ccircle cx='140' cy='90' r='1.3'/%3E%3Ccircle cx='420' cy='170' r='1.1'/%3E%3Ccircle cx='760' cy='110' r='1.4'/%3E%3Ccircle cx='860' cy='260' r='1.1'/%3E%3Ccircle cx='260' cy='330' r='1.2'/%3E%3Ccircle cx='620' cy='410' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 980px 560px;
+      mix-blend-mode: overlay;
+      animation: pan 22s linear infinite;
+    }
+
+    @keyframes pan{
+      0%{background-position: 0 0;}
+      100%{background-position: 980px 560px;}
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .bgPattern{ animation:none; }
     }
 
     .wrap{
@@ -66,7 +141,9 @@
       place-items:center;
       padding:40px 18px 70px;
       position:relative;
+      z-index:1;
     }
+
     .shell{ width:min(1050px, 100%); position:relative; }
 
     .topbar{
@@ -75,7 +152,7 @@
       justify-content:space-between;
       gap:12px;
       padding:10px 2px 18px;
-      opacity:.94;
+      opacity:.95;
       flex-wrap:wrap;
     }
 
@@ -92,11 +169,35 @@
       -webkit-backdrop-filter: blur(var(--glass-blur));
       backdrop-filter: blur(var(--glass-blur));
     }
+
     .dot{
       width:10px;height:10px;border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, white, var(--a1));
+      background: radial-gradient(circle at 30% 30%, #fff, var(--a1));
       box-shadow: 0 0 18px var(--glow);
     }
+
+
+    .heroMedia{
+  margin: 14px auto 6px;
+  width: min(720px, 100%);
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid var(--stroke);
+  background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+  box-shadow: 0 18px 55px rgba(0,0,0,.22);
+}
+.heroMedia img{
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+@media (max-width: 640px){
+  .heroMedia{ border-radius: 18px; }
+}
+
+
+
     .row{
       display:inline-flex;
       align-items:center;
@@ -104,11 +205,12 @@
       flex-wrap:wrap;
       justify-content:flex-end;
     }
+
     .toggle{
       cursor:pointer;
       border:none;
       color:var(--text);
-      font-weight:800;
+      font-weight:900;
       padding:10px 14px;
       border-radius:999px;
       background:linear-gradient(180deg, var(--ui-bg1), var(--ui-bg2));
@@ -118,27 +220,64 @@
       transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
       position:relative;
       overflow:hidden;
+      white-space:nowrap;
     }
     .toggle:hover{ box-shadow:0 0 0 1px rgba(255,255,255,.10), 0 10px 30px rgba(0,0,0,.25); filter: brightness(1.05); }
     .toggle:active{ transform:scale(.98); }
 
-    .mini{
+    .heartBtn{
       cursor:pointer;
       border:none;
-      padding:10px 12px;
+      width:44px;
+      height:40px;
       border-radius:999px;
       border:1px solid var(--stroke);
-      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
       -webkit-backdrop-filter: blur(var(--glass-blur));
       backdrop-filter: blur(var(--glass-blur));
-      color:var(--text);
+      display:grid;
+      place-items:center;
+      font-size:18px;
       font-weight:900;
-      transition: transform .12s ease, filter .2s ease;
+      color:rgba(255,255,255,.95);
+      transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
       position:relative;
       overflow:hidden;
     }
-    .mini:active{ transform:scale(.98); }
-    .mini:hover{ filter:brightness(1.06); }
+    .heartBtn:active{ transform:scale(.96); }
+    .heartBtn:hover{ filter:brightness(1.06); }
+
+    .heartBtn[data-pal="pink"]{
+      background:
+        radial-gradient(16px 16px at 30% 30%, rgba(255,255,255,.55), transparent 60%),
+        linear-gradient(135deg, rgba(255,118,200,.40), rgba(122,183,255,.18));
+      box-shadow: 0 10px 26px rgba(0,0,0,.22), 0 0 0 1px rgba(255,255,255,.06) inset;
+    }
+    .heartBtn[data-pal="blue"]{
+      background:
+        radial-gradient(16px 16px at 30% 30%, rgba(255,255,255,.55), transparent 60%),
+        linear-gradient(135deg, rgba(122,183,255,.42), rgba(142,255,193,.18));
+      box-shadow: 0 10px 26px rgba(0,0,0,.22), 0 0 0 1px rgba(255,255,255,.06) inset;
+    }
+    .heartBtn[data-pal="green"]{
+      background:
+        radial-gradient(16px 16px at 30% 30%, rgba(255,255,255,.55), transparent 60%),
+        linear-gradient(135deg, rgba(142,255,193,.40), rgba(255,118,200,.18));
+      box-shadow: 0 10px 26px rgba(0,0,0,.22), 0 0 0 1px rgba(255,255,255,.06) inset;
+    }
+    .heartBtn[data-pal="sun"]{
+      background:
+        radial-gradient(16px 16px at 30% 30%, rgba(255,255,255,.55), transparent 60%),
+        linear-gradient(135deg, rgba(255,211,110,.38), rgba(255,118,200,.18));
+      box-shadow: 0 10px 26px rgba(0,0,0,.22), 0 0 0 1px rgba(255,255,255,.06) inset;
+    }
+
+    .heartBtn.active{
+      transform: translateY(-1px);
+      box-shadow:
+        0 16px 40px rgba(0,0,0,.28),
+        0 0 0 1px rgba(255,255,255,.10) inset,
+        0 0 22px var(--glow);
+    }
 
     .hero{
       border:1px solid var(--stroke);
@@ -153,16 +292,17 @@
       transform: translateZ(0);
       will-change: transform;
     }
+
     .hero::after{
       content:"";
       position:absolute; inset:-2px;
       background: conic-gradient(from 0deg,
-        rgba(255,118,200,.0),
-        rgba(255,118,200,.55),
-        rgba(122,183,255,.55),
-        rgba(142,255,193,.4),
-        rgba(255,118,200,.55),
-        rgba(255,118,200,.0));
+        rgba(0,0,0,0),
+        color-mix(in srgb, var(--a1) 65%, transparent),
+        color-mix(in srgb, var(--a2) 65%, transparent),
+        color-mix(in srgb, var(--a3) 55%, transparent),
+        color-mix(in srgb, var(--a1) 65%, transparent),
+        rgba(0,0,0,0));
       filter: blur(16px);
       opacity: var(--ring-opacity);
       z-index:0;
@@ -193,16 +333,16 @@
     .mainHeader .handle{
       display:block;
       font-size: clamp(14px, 1.8vw, 18px);
-      font-weight:800;
+      font-weight:850;
       color:var(--muted);
       margin-top:6px;
     }
     .mainHeader .sub{
       display:block;
       font-size: clamp(14px, 2vw, 20px);
-      font-weight:900;
+      font-weight:950;
       margin-top:10px;
-      color: rgba(255,255,255,.88);
+      color: rgba(255,255,255,.90);
     }
 
     .controls{
@@ -212,6 +352,7 @@
       gap:10px;
       padding:14px 0 10px;
     }
+
     .pill{
       cursor:pointer;
       border:none;
@@ -223,12 +364,13 @@
       -webkit-backdrop-filter: blur(var(--glass-blur));
       backdrop-filter: blur(var(--glass-blur));
       transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
-      font-weight:900;
+      font-weight:950;
       display:inline-flex;
       align-items:center;
       gap:8px;
       position:relative;
       overflow:hidden;
+      white-space:nowrap;
     }
     .pill:hover{ box-shadow: 0 0 0 1px rgba(255,255,255,.10), 0 16px 40px rgba(0,0,0,.28); filter: brightness(1.06); }
     .pill:active{transform:scale(.98)}
@@ -240,6 +382,7 @@
       gap:14px;
       margin-top: 14px;
     }
+
     .card{
       grid-column: span 12;
       padding:16px 16px 14px;
@@ -256,6 +399,7 @@
     .card:hover{ transform: translateY(-2px); box-shadow: var(--shadow-card); filter:brightness(1.03); }
     .card h3{ margin:0 0 6px; font-size:18px; letter-spacing:.2px; }
     .card p{ margin:0; color:var(--muted); line-height:1.75; font-size:14px; white-space:pre-line; }
+
     .meta{
       margin-top:10px;
       display:flex;
@@ -263,10 +407,11 @@
       flex-wrap:wrap;
       justify-content:space-between;
       align-items:center;
-      color:rgba(255,255,255,.76);
-      font-weight:800;
+      color:rgba(255,255,255,.78);
+      font-weight:900;
       font-size:13px;
     }
+
     .chip{
       display:inline-flex;
       align-items:center;
@@ -321,11 +466,11 @@
       box-shadow: 0 20px 60px rgba(0,0,0,.35);
       opacity:0; transform: translateY(10px);
       transition: opacity .2s ease, transform .2s ease;
-      font-weight:900;
-      color:rgba(255,255,255,.90);
+      font-weight:950;
+      color:rgba(255,255,255,.92);
     }
     .toast.show{opacity:1; transform: translateY(0)}
-    .toast small{display:block; margin-top:4px; font-weight:800; color:var(--muted)}
+    .toast small{display:block; margin-top:4px; font-weight:850; color:var(--muted)}
 
     .ripple{
       position:absolute;
@@ -333,11 +478,62 @@
       transform: translate(-50%,-50%) scale(0);
       opacity:.65;
       pointer-events:none;
-      background: radial-gradient(circle, rgba(255,255,255,.75), rgba(255,118,200,.20), transparent 60%);
+      background: radial-gradient(circle, rgba(255,255,255,.75), color-mix(in srgb, var(--a1) 30%, transparent), transparent 62%);
       animation: ripple .55s ease-out forwards;
     }
     @keyframes ripple{
       to{ transform: translate(-50%,-50%) scale(18); opacity:0; }
+    }
+
+    .gallery{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    .pic{
+      border-radius:16px;
+      overflow:hidden;
+      border:1px solid var(--stroke);
+      background:linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      aspect-ratio: 1 / 1;
+    }
+
+    .singleMedia{
+  margin-top:10px;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid var(--stroke);
+  background: linear-gradient(135deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+  box-shadow: 0 18px 55px rgba(0,0,0,.22);
+}
+.singleMedia img{
+  width:100%;
+  height:auto;
+  display:block;
+  object-fit:cover;
+  max-height:420px;
+}
+@media (max-width: 640px){
+  .singleMedia img{ max-height:320px; }
+}
+
+#cardGallery{
+  grid-column: 1 / -1;       /* take full row */
+  max-width: 760px;          /* make it not too wide */
+  justify-self: center;      /* center inside the grid */
+  margin-inline: auto;       /* also centers in RTL/LTR */
+}
+
+
+
+
+    .pic img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      transform: translateZ(0);
     }
 
     body.low .hero,
@@ -345,14 +541,19 @@
     body.low .badge,
     body.low .toggle,
     body.low .pill,
-    body.low .mini,
-    body.low .toast{
+    body.low .toast,
+    body.low .heartBtn{
       -webkit-backdrop-filter:none !important;
       backdrop-filter:none !important;
     }
+    body.low .bgPattern{ opacity:.22; animation:none; }
+    body.low body::after{ animation:none; }
+    body.low .gallery{ display:none; }
   </style>
 </head>
+
 <body>
+  <div class="bgPattern" aria-hidden="true"></div>
   <canvas id="sparkCanvas"></canvas>
 
   <div class="wrap">
@@ -365,9 +566,10 @@
         </div>
 
         <div class="row">
-          <button class="mini" id="pal1" type="button" aria-label="پالت ۱">💗</button>
-          <button class="mini" id="pal2" type="button" aria-label="پالت ۲">💙</button>
-          <button class="mini" id="pal3" type="button" aria-label="پالت ۳">💚</button>
+          <button class="heartBtn" data-pal="pink" id="palPink" type="button" aria-label="پالت صورتی">💗</button>
+          <button class="heartBtn" data-pal="blue" id="palBlue" type="button" aria-label="پالت آبی">💙</button>
+          <button class="heartBtn" data-pal="green" id="palGreen" type="button" aria-label="پالت سبز">💚</button>
+          <button class="heartBtn" data-pal="sun" id="palSun" type="button" aria-label="پالت گرم">🧡</button>
           <button class="toggle" id="themeBtn" type="button">تغییر فضا ✨</button>
         </div>
       </div>
@@ -424,6 +626,7 @@
           </h1>
 
           <div class="controls">
+            <button class="pill" id="btnCheer" type="button"><span class="emoji">🌸</span> روحیه بده</button>
             <button class="pill" id="btnMood" type="button"><span class="emoji">🎭</span> تغییر حالت</button>
             <button class="pill" id="btnBurst" type="button"><span class="emoji">✨</span> درخشش</button>
             <button class="pill" id="btnPulse" type="button"><span class="emoji">💫</span> ضربان</button>
@@ -437,7 +640,7 @@
               <p id="quoteText">روی کارت بزن تا متن عوض شود.</p>
               <div class="meta">
                 <span class="chip" id="tapChip">تپ‌ها: 0</span>
-                <span class="chip" id="hintChip">نگه‌دار = درخشش بیشتر</span>
+                <span class="chip" id="palChip">پالت: 💗</span>
               </div>
             </div>
 
@@ -447,12 +650,21 @@
 @sforati
 تعلق گرفتن نمره امتیازی به همه به مناسبت شب یلدا در کمین است مگه نه؟😔</p>
               <div class="meta">
-                <span class="chip" id="palChip">پالت: 💗</span>
                 <span class="chip" id="modeChip">حالت: 😔</span>
+                <span class="chip" id="fxChip">کیفیت: خودکار</span>
               </div>
             </div>
 
-            
+            <div class="card span6" id="cardGallery">
+              <h3>تصویرها</h3>
+<div class="singleMedia">
+  <img src="assets/hero.gif" alt="" loading="lazy" decoding="async">
+</div>
+              
+              </div>
+            </div>
+
+           
           </div>
 
         </div>
@@ -492,6 +704,9 @@
     const saveData = navigator.connection?.saveData === true;
     const lowMem = (navigator.deviceMemory && navigator.deviceMemory <= 4);
     const lowPower = isSmall || isMobileUA || saveData || lowMem;
+
+    const fxChip = document.getElementById("fxChip");
+    fxChip.textContent = lowPower ? "کیفیت: سبک" : "کیفیت: کامل";
     if (lowPower) document.body.classList.add("low");
 
     const DPR_CAP = lowPower ? 1.25 : 2;
@@ -502,7 +717,6 @@
 
     const moods = ["😔","😼","😳","😎","🥲","🫠"];
     let moodIdx = 0;
-
     const moodText = document.getElementById("moodText");
     const modeChip = document.getElementById("modeChip");
 
@@ -511,47 +725,63 @@
       const m = moods[moodIdx];
       moodText.textContent = `حالت: ${m}`;
       modeChip.textContent = `حالت: ${m}`;
-      const map = {
-        "😔":["rgba(255,120,200,.55)","rgba(120,170,255,.45)","#ff76c8","#7ab7ff","#8effc1"],
-        "😼":["rgba(142,255,193,.55)","rgba(255,118,200,.40)","#8effc1","#ff76c8","#7ab7ff"],
-        "😳":["rgba(255,255,255,.40)","rgba(255,118,200,.45)","#ffffff","#ff76c8","#7ab7ff"],
-        "😎":["rgba(122,183,255,.55)","rgba(142,255,193,.35)","#7ab7ff","#8effc1","#ff76c8"],
-        "🥲":["rgba(120,170,255,.55)","rgba(255,118,200,.35)","#7ab7ff","#ff76c8","#8effc1"],
-        "🫠":["rgba(255,118,200,.55)","rgba(142,255,193,.35)","#ff76c8","#8effc1","#7ab7ff"]
-      };
-      const v = map[m] || map["😔"];
-      document.documentElement.style.setProperty("--glow", v[0]);
-      document.documentElement.style.setProperty("--glow2", v[1]);
-      document.documentElement.style.setProperty("--a1", v[2]);
-      document.documentElement.style.setProperty("--a2", v[3]);
-      document.documentElement.style.setProperty("--a3", v[4]);
     }
 
-    let altTheme = false;
+    const palettes = {
+      pink:  { chip:"💗", a1:"#ff52d6", a2:"#7ab7ff", a3:"#8effc1", a1s:"rgba(255,82,214,.20)", a2s:"rgba(122,183,255,.16)", a3s:"rgba(142,255,193,.12)", g1:"rgba(255,82,214,.58)", g2:"rgba(122,183,255,.45)", bg1:"#0b1023", bg2:"#1b1240" },
+      blue:  { chip:"💙", a1:"#7ab7ff", a2:"#8effc1", a3:"#ff76c8", a1s:"rgba(122,183,255,.20)", a2s:"rgba(142,255,193,.14)", a3s:"rgba(255,118,200,.10)", g1:"rgba(122,183,255,.58)", g2:"rgba(142,255,193,.40)", bg1:"#071225", bg2:"#151a45" },
+      green: { chip:"💚", a1:"#8effc1", a2:"#ff76c8", a3:"#7ab7ff", a1s:"rgba(142,255,193,.20)", a2s:"rgba(255,118,200,.14)", a3s:"rgba(122,183,255,.12)", g1:"rgba(142,255,193,.56)", g2:"rgba(255,118,200,.40)", bg1:"#071411", bg2:"#16263b" },
+      sun:   { chip:"🧡", a1:"#ffd36e", a2:"#ff76c8", a3:"#7ab7ff", a1s:"rgba(255,211,110,.20)", a2s:"rgba(255,118,200,.14)", a3s:"rgba(122,183,255,.12)", g1:"rgba(255,211,110,.56)", g2:"rgba(255,118,200,.40)", bg1:"#120a18", bg2:"#1f1a3c" }
+    };
+
+    function applyPalette(key){
+      const p = palettes[key] || palettes.pink;
+      document.documentElement.style.setProperty("--a1", p.a1);
+      document.documentElement.style.setProperty("--a2", p.a2);
+      document.documentElement.style.setProperty("--a3", p.a3);
+      document.documentElement.style.setProperty("--a1soft", p.a1s);
+      document.documentElement.style.setProperty("--a2soft", p.a2s);
+      document.documentElement.style.setProperty("--a3soft", p.a3s);
+      document.documentElement.style.setProperty("--glow", p.g1);
+      document.documentElement.style.setProperty("--glow2", p.g2);
+      document.documentElement.style.setProperty("--bg1", p.bg1);
+      document.documentElement.style.setProperty("--bg2", p.bg2);
+      document.getElementById("palChip").textContent = `پالت: ${p.chip}`;
+      document.querySelectorAll(".heartBtn").forEach(b=>b.classList.toggle("active", b.dataset.pal===key));
+      toast(`پالت ${p.chip}`, "رنگ‌ها تغییر کرد.");
+      addSparks(innerWidth/2, innerHeight/3, lowPower ? 18 : 34, true);
+      if (navigator.vibrate && lowPower) navigator.vibrate(12);
+    }
+
     const themeBtn = document.getElementById("themeBtn");
+    let altSpace = false;
     themeBtn.addEventListener("click", (e)=>{
       ripple(themeBtn, e);
-      altTheme = !altTheme;
-      document.documentElement.style.setProperty("--bg1", altTheme ? "#070a14" : "#0b1023");
-      document.documentElement.style.setProperty("--bg2", altTheme ? "#201035" : "#1b1240");
-      toast(altTheme ? "فضا: شب 🌙" : "فضا: بنفش 💜", "تغییر اعمال شد.");
+      altSpace = !altSpace;
+      if (altSpace){
+        document.documentElement.style.setProperty("--noise-opacity", lowPower ? ".06" : ".10");
+        document.documentElement.style.setProperty("--ring-opacity", lowPower ? ".28" : ".46");
+        toast("فضا عوض شد ✨", "یه حس تازه.");
+      } else {
+        document.documentElement.style.setProperty("--noise-opacity", lowPower ? ".08" : ".14");
+        document.documentElement.style.setProperty("--ring-opacity", lowPower ? ".36" : ".55");
+        toast("فضا برگشت ✨", "همون حس قبلی.");
+      }
     });
 
-    const palChip = document.getElementById("palChip");
-    function setPalette(name, a1, a2, a3, glow, glow2){
-      document.documentElement.style.setProperty("--a1", a1);
-      document.documentElement.style.setProperty("--a2", a2);
-      document.documentElement.style.setProperty("--a3", a3);
-      document.documentElement.style.setProperty("--glow", glow);
-      document.documentElement.style.setProperty("--glow2", glow2);
-      palChip.textContent = `پالت: ${name}`;
-      toast(`پالت ${name}`, "رنگ‌ها تازه شدند.");
-      addSparks(innerWidth/2, innerHeight/3, lowPower ? 24 : 46, true);
-    }
+    const palPink  = document.getElementById("palPink");
+    const palBlue  = document.getElementById("palBlue");
+    const palGreen = document.getElementById("palGreen");
+    const palSun   = document.getElementById("palSun");
 
-    document.getElementById("pal1").addEventListener("click", (e)=>{ ripple(e.currentTarget, e); setPalette("💗", "#ff76c8","#7ab7ff","#8effc1","rgba(255,120,200,.55)","rgba(120,170,255,.45)"); });
-    document.getElementById("pal2").addEventListener("click", (e)=>{ ripple(e.currentTarget, e); setPalette("💙", "#7ab7ff","#8effc1","#ff76c8","rgba(122,183,255,.55)","rgba(142,255,193,.40)"); });
-    document.getElementById("pal3").addEventListener("click", (e)=>{ ripple(e.currentTarget, e); setPalette("💚", "#8effc1","#ff76c8","#7ab7ff","rgba(142,255,193,.55)","rgba(255,118,200,.40)"); });
+    [palPink, palBlue, palGreen, palSun, themeBtn].forEach(btn=>{
+      btn.addEventListener("click", (e)=> ripple(btn, e));
+    });
+
+    palPink.addEventListener("click", ()=> applyPalette("pink"));
+    palBlue.addEventListener("click", ()=> applyPalette("blue"));
+    palGreen.addEventListener("click", ()=> applyPalette("green"));
+    palSun.addEventListener("click", ()=> applyPalette("sun"));
 
     const canvas = document.getElementById("sparkCanvas");
     const ctx = canvas.getContext("2d", { alpha:true });
@@ -572,7 +802,7 @@
     resize();
 
     function allocSpark(){
-      return pool.pop() || {x:0,y:0,vx:0,vy:0,life:0,size:0,t:0};
+      return pool.pop() || {x:0,y:0,vx:0,vy:0,life:0,size:0};
     }
 
     function addSparks(x,y,count=24, burst=false){
@@ -594,7 +824,6 @@
         s.vy = Math.sin(a)*sp*dpr;
         s.life = 20 + Math.random()*22;
         s.size = 1 + Math.random()*2.0;
-        s.t = Math.random();
         sparks.push(s);
       }
     }
@@ -627,14 +856,13 @@
 
         const alpha = Math.max(0, s.life/44);
         ctx.globalAlpha = alpha;
-
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.size*dpr, 0, Math.PI*2);
         ctx.fillStyle = "rgba(255,255,255,1)";
         ctx.fill();
 
         if (!lowPower){
-          ctx.globalAlpha = alpha*0.28;
+          ctx.globalAlpha = alpha*0.26;
           ctx.beginPath();
           ctx.arc(s.x, s.y, s.size*3.6*dpr, 0, Math.PI*2);
           ctx.fillStyle = "rgba(255,118,200,1)";
@@ -670,9 +898,7 @@
       const ty = y * (lowPower ? 6 : 10);
       girlsLayer.style.transform = `translate(${tx}px, ${ty}px)`;
       if (!lowPower){
-        const rx = (-y) * 2.0;
-        const ry = (x) * 2.0;
-        hero.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+        hero.style.transform = `rotateX(${(-y)*2.0}deg) rotateY(${(x)*2.0}deg)`;
       }
     }
 
@@ -688,16 +914,6 @@
       if(!e.touches?.length) return;
       queueParallax(e.touches[0].clientX, e.touches[0].clientY);
     }, {passive:true});
-
-    if (!lowPower){
-      let trailT = 0;
-      window.addEventListener("pointermove", (e)=>{
-        const now = performance.now();
-        if (now - trailT < 55) return;
-        trailT = now;
-        addSparks(e.clientX, e.clientY, 4, false);
-      }, {passive:true});
-    }
 
     let pressTimer = null;
     let pressing = false;
@@ -722,22 +938,28 @@
     window.addEventListener("pointerup", (e)=> endPress(e.clientX, e.clientY), {passive:true});
     window.addEventListener("pointercancel", ()=>{ pressing=false; clearTimeout(pressTimer); }, {passive:true});
 
+    const btnCheer = document.getElementById("btnCheer");
     const btnMood = document.getElementById("btnMood");
     const btnBurst = document.getElementById("btnBurst");
     const btnPulse = document.getElementById("btnPulse");
     const btnFx = document.getElementById("btnFx");
     const btnCopy = document.getElementById("btnCopy");
 
-    function bindRipple(btn){
+    [btnCheer, btnMood, btnBurst, btnPulse, btnFx, btnCopy].forEach(btn=>{
       btn.addEventListener("click", (e)=> ripple(btn, e));
-    }
-    [btnMood, btnBurst, btnPulse, btnFx, btnCopy].forEach(bindRipple);
-    [themeBtn, document.getElementById("pal1"), document.getElementById("pal2"), document.getElementById("pal3")].forEach(bindRipple);
+    });
 
     btnMood.addEventListener("click", ()=>{
       setMood(moodIdx+1);
       addSparks(innerWidth/2, innerHeight/2, lowPower ? 18 : 34, true);
-      toast("حالت عوض شد 🎭", "یه رنگ تازه!");
+      toast("حالت عوض شد 🎭", "یه حس تازه!");
+    });
+
+    btnCheer.addEventListener("click", ()=>{
+      setMood(moodIdx+1);
+      nextQuote();
+      addSparks(innerWidth/2, innerHeight/2, lowPower ? 22 : 40, true);
+      toast("روحیه بهتر شد 🌸", "یه ذره نور بیشتر!");
     });
 
     btnBurst.addEventListener("click", ()=>{
@@ -804,8 +1026,7 @@
       "هر چی باشه، امید روشنه 🌙"
     ];
     function nextQuote(){
-      const q = quotes[Math.floor(Math.random()*quotes.length)];
-      quoteText.textContent = q;
+      quoteText.textContent = quotes[Math.floor(Math.random()*quotes.length)];
     }
 
     card1.addEventListener("click", (e)=>{
@@ -837,6 +1058,7 @@
 
     setMood(0);
     nextQuote();
+    applyPalette("pink");
     if (lowPower) toast("حالت سبک فعال شد 📱", "روان‌تر روی موبایل");
   </script>
 </body>
