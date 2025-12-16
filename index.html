@@ -8,16 +8,18 @@
     :root{
       --bg1:#0b1023;
       --bg2:#1b1240;
-      --card: rgba(255,255,255,.08);
-      --card2: rgba(255,255,255,.12);
       --stroke: rgba(255,255,255,.14);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.70);
       --glow: rgba(255,120,200,.55);
       --glow2: rgba(120,170,255,.45);
-      --accent1:#ff76c8;
-      --accent2:#7ab7ff;
-      --accent3:#8effc1;
+
+      /* performance knobs */
+      --glass-blur: 14px;
+      --shadow-hero: 0 24px 70px rgba(0,0,0,.35);
+      --shadow-card: 0 24px 60px rgba(0,0,0,.28);
+      --noise-opacity: .18;
+      --ring-opacity: .55;
     }
 
     *{box-sizing:border-box}
@@ -34,14 +36,29 @@
       overflow-x:hidden;
     }
 
-    /* subtle noise */
     body::before{
       content:"";
       position:fixed; inset:0;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
       mix-blend-mode:overlay;
-      opacity:.18;
+      opacity:var(--noise-opacity);
       pointer-events:none;
+    }
+
+    /* Mobile performance: reduce blur/shadows/noise/ring intensity */
+    @media (max-width: 640px){
+      :root{
+        --glass-blur: 6px;        /* smaller blur = faster */
+        --shadow-hero: 0 16px 44px rgba(0,0,0,.30);
+        --shadow-card: 0 16px 40px rgba(0,0,0,.24);
+        --noise-opacity: .10;
+        --ring-opacity: .38;
+      }
+    }
+
+    /* Very low motion users */
+    @media (prefers-reduced-motion: reduce){
+      :root{ --ring-opacity: .18; }
     }
 
     .wrap{
@@ -51,48 +68,37 @@
       padding:40px 18px 70px;
       position:relative;
     }
-
-    .shell{
-      width:min(1050px, 100%);
-      position:relative;
-    }
+    .shell{ width:min(1050px, 100%); position:relative; }
 
     .topbar{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      padding:10px 2px 18px;
-      opacity:.92;
+      display:flex; align-items:center; justify-content:space-between;
+      gap:14px; padding:10px 2px 18px; opacity:.92;
     }
 
     .badge{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
+      display:inline-flex; align-items:center; gap:10px;
       padding:10px 12px;
       border:1px solid var(--stroke);
       background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
       border-radius:999px;
-      backdrop-filter: blur(10px);
       box-shadow: 0 10px 30px rgba(0,0,0,.25);
       user-select:none;
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      backdrop-filter: blur(var(--glass-blur));
     }
     .dot{
       width:10px;height:10px;border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, white, var(--accent1));
+      background: radial-gradient(circle at 30% 30%, white, rgba(255,118,200,.85));
       box-shadow: 0 0 18px var(--glow);
     }
+
     .toggle{
-      cursor:pointer;
-      border:none;
-      color:var(--text);
-      font-weight:600;
-      padding:10px 14px;
-      border-radius:999px;
+      cursor:pointer; border:none; color:var(--text);
+      font-weight:600; padding:10px 14px; border-radius:999px;
       background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
       border:1px solid var(--stroke);
-      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      backdrop-filter: blur(var(--glass-blur));
       transition: transform .12s ease, box-shadow .2s ease;
     }
     .toggle:active{transform:scale(.98)}
@@ -102,42 +108,48 @@
       border:1px solid var(--stroke);
       background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
       border-radius:26px;
-      backdrop-filter: blur(14px);
-      box-shadow: 0 24px 70px rgba(0,0,0,.35);
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      backdrop-filter: blur(var(--glass-blur));
+      box-shadow: var(--shadow-hero);
       position:relative;
       overflow:hidden;
+      contain: layout paint; /* helps mobile browsers */
     }
 
-    /* animated gradient ring */
     .hero::after{
       content:"";
       position:absolute; inset:-2px;
-      background: conic-gradient(from 0deg, rgba(255,118,200,.0), rgba(255,118,200,.55), rgba(122,183,255,.55), rgba(142,255,193,.4), rgba(255,118,200,.55), rgba(255,118,200,.0));
+      background: conic-gradient(from 0deg,
+        rgba(255,118,200,.0),
+        rgba(255,118,200,.55),
+        rgba(122,183,255,.55),
+        rgba(142,255,193,.4),
+        rgba(255,118,200,.55),
+        rgba(255,118,200,.0));
       filter: blur(16px);
-      opacity:.55;
+      opacity: var(--ring-opacity);
       z-index:0;
       animation: spin 10s linear infinite;
       pointer-events:none;
+      will-change: transform;
     }
     @keyframes spin{to{transform:rotate(360deg)}}
-
-    .heroInner{
-      position:relative;
-      z-index:1;
-      padding:28px 22px 20px;
+    @media (prefers-reduced-motion: reduce){
+      .hero::after{animation:none}
     }
+
+    .heroInner{ position:relative; z-index:1; padding:28px 22px 20px; }
 
     .mainHeader{
       text-align:center;
       margin: 8px auto 10px;
       line-height:1.6;
       font-weight:900;
-      letter-spacing:.2px;
       font-size: clamp(22px, 3.2vw, 40px);
-      text-shadow:
-        0 0 22px rgba(255,118,200,.35),
-        0 0 30px rgba(122,183,255,.25);
+      text-shadow: 0 0 18px rgba(255,118,200,.30), 0 0 24px rgba(122,183,255,.20);
       user-select:none;
+      transform: translateZ(0);
+      will-change: transform;
     }
     .mainHeader .handle{
       display:block;
@@ -155,32 +167,22 @@
     }
 
     .controls{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      gap:10px;
-      padding:14px 0 10px;
+      display:flex; flex-wrap:wrap; justify-content:center;
+      gap:10px; padding:14px 0 10px;
     }
-
     .pill{
-      cursor:pointer;
-      border:none;
-      padding:11px 14px;
-      border-radius:999px;
+      cursor:pointer; border:none;
+      padding:11px 14px; border-radius:999px;
       color:var(--text);
       background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
       border:1px solid var(--stroke);
-      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      backdrop-filter: blur(var(--glass-blur));
       transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
       font-weight:700;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
+      display:inline-flex; align-items:center; gap:8px;
     }
-    .pill:hover{
-      box-shadow: 0 0 0 1px rgba(255,255,255,.10), 0 16px 40px rgba(0,0,0,.28);
-      filter: brightness(1.06);
-    }
+    .pill:hover{ box-shadow: 0 0 0 1px rgba(255,255,255,.10), 0 16px 40px rgba(0,0,0,.28); filter: brightness(1.06); }
     .pill:active{transform:scale(.98)}
     .emoji{filter: drop-shadow(0 6px 14px rgba(0,0,0,.25))}
 
@@ -190,91 +192,70 @@
       gap:14px;
       margin-top: 14px;
     }
-
     .card{
       grid-column: span 12;
       padding:16px 16px 14px;
       border-radius:20px;
       border:1px solid var(--stroke);
       background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
-      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      backdrop-filter: blur(var(--glass-blur));
       position:relative;
       overflow:hidden;
       transition: transform .18s ease, box-shadow .25s ease;
+      contain: paint;
     }
-    .card:hover{
-      transform: translateY(-2px);
-      box-shadow: 0 24px 60px rgba(0,0,0,.28);
-    }
-    .card h3{
-      margin:0 0 6px;
-      font-size:18px;
-      letter-spacing:.2px;
-    }
-    .card p{
-      margin:0;
-      color:var(--muted);
-      line-height:1.7;
-      font-size:14px;
-    }
-
+    .card:hover{ transform: translateY(-2px); box-shadow: var(--shadow-card); }
+    .card h3{ margin:0 0 6px; font-size:18px; }
+    .card p{ margin:0; color:var(--muted); line-height:1.7; font-size:14px; }
     @media (min-width: 860px){
       .card.span6{grid-column: span 6}
       .card.span4{grid-column: span 4}
     }
 
-    /* “Anime girl” silhouettes made with SVG background (no external images) */
     .girls{
       position:absolute;
       inset:-40px -30px auto -30px;
       height:340px;
       pointer-events:none;
       opacity:.34;
-      filter: blur(.2px);
       transform: translateZ(0);
+      will-change: transform;
     }
     .girls svg{width:100%; height:100%}
     .girlGlow{
-      filter: drop-shadow(0 0 24px rgba(255,118,200,.30))
-              drop-shadow(0 0 26px rgba(122,183,255,.20));
+      filter: drop-shadow(0 0 18px rgba(255,118,200,.25))
+              drop-shadow(0 0 18px rgba(122,183,255,.18));
+    }
+    @media (max-width: 640px){
+      .girlGlow{ filter: none; } /* big win on some phones */
     }
 
-    /* Sparkles canvas */
     #sparkCanvas{
-      position:fixed;
-      inset:0;
+      position:fixed; inset:0;
       z-index:2;
       pointer-events:none;
     }
 
-    /* Toast */
     .toast{
       position:fixed;
-      right:16px;
-      bottom:16px;
+      right:16px; bottom:16px;
       z-index:5;
       max-width:min(420px, calc(100% - 32px));
       padding:12px 14px;
       border-radius:16px;
       border:1px solid var(--stroke);
       background: rgba(18,18,40,.55);
-      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      backdrop-filter: blur(var(--glass-blur));
       box-shadow: 0 20px 60px rgba(0,0,0,.35);
-      opacity:0;
-      transform: translateY(10px);
+      opacity:0; transform: translateY(10px);
       transition: opacity .2s ease, transform .2s ease;
       font-weight:700;
       color:rgba(255,255,255,.90);
     }
     .toast.show{opacity:1; transform: translateY(0)}
     .toast small{display:block; margin-top:4px; font-weight:600; color:var(--muted)}
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce){
-      .hero::after{animation:none}
-      .card{transition:none}
-      .pill{transition:none}
-    }
   </style>
 </head>
 <body>
@@ -293,7 +274,6 @@
 
       <section class="hero" id="hero">
         <div class="girls" id="girlsLayer" aria-hidden="true">
-          <!-- Simple anime-style silhouettes using SVG shapes -->
           <svg viewBox="0 0 1200 340" class="girlGlow" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
@@ -306,48 +286,31 @@
               </linearGradient>
             </defs>
 
-            <!-- Girl 1 -->
             <g transform="translate(120 50)">
               <path fill="url(#g1)" opacity=".9"
-                d="M160,250
-                   c20,-60 5,-110 -10,-135
-                   c-25,-45 -10,-85 25,-95
-                   c30,-10 70,10 75,45
-                   c10,60 -40,70 -45,95
-                   c-5,25 35,35 45,90
+                d="M160,250 c20,-60 5,-110 -10,-135 c-25,-45 -10,-85 25,-95
+                   c30,-10 70,10 75,45 c10,60 -40,70 -45,95 c-5,25 35,35 45,90
                    c-40,20 -90,20 -90,0z"/>
               <circle cx="190" cy="70" r="32" fill="rgba(255,255,255,.12)"/>
               <path fill="rgba(255,255,255,.10)"
                 d="M165,92 c10,18 40,18 50,0 c-18,22 -32,26 -50,0z"/>
             </g>
 
-            <!-- Girl 2 -->
             <g transform="translate(520 25)">
               <path fill="url(#g2)" opacity=".9"
-                d="M210,275
-                   c10,-70 -10,-130 -35,-160
-                   c-35,-45 -20,-95 20,-112
-                   c48,-20 100,18 102,70
-                   c1,44 -30,56 -46,74
-                   c-16,18 6,34 18,60
-                   c18,40 24,58 16,80
-                   c-28,22 -60,26 -75,14z"/>
+                d="M210,275 c10,-70 -10,-130 -35,-160 c-35,-45 -20,-95 20,-112
+                   c48,-20 100,18 102,70 c1,44 -30,56 -46,74 c-16,18 6,34 18,60
+                   c18,40 24,58 16,80 c-28,22 -60,26 -75,14z"/>
               <circle cx="225" cy="78" r="34" fill="rgba(255,255,255,.12)"/>
               <path fill="rgba(0,0,0,.10)"
                 d="M190,110 c16,10 48,10 68,0 c-18,22 -50,26 -68,0z"/>
             </g>
 
-            <!-- Girl 3 -->
             <g transform="translate(880 65)">
               <path fill="url(#g1)" opacity=".85"
-                d="M170,245
-                   c18,-50 12,-92 -6,-126
-                   c-18,-34 -16,-66 8,-86
-                   c28,-24 78,-10 92,28
-                   c10,28 -2,44 -18,60
-                   c-16,16 -6,28 10,54
-                   c18,30 26,56 24,80
-                   c-30,18 -76,14 -110,-10z"/>
+                d="M170,245 c18,-50 12,-92 -6,-126 c-18,-34 -16,-66 8,-86
+                   c28,-24 78,-10 92,28 c10,28 -2,44 -18,60 c-16,16 -6,28 10,54
+                   c18,30 26,56 24,80 c-30,18 -76,14 -110,-10z"/>
               <circle cx="210" cy="74" r="30" fill="rgba(255,255,255,.12)"/>
             </g>
           </svg>
@@ -370,23 +333,23 @@
           <div class="grid">
             <div class="card span6" id="card1">
               <h3>کلیک کن تا واکنش ببینی 🎀</h3>
-              <p>هر کارت یه افکت کوچولو داره. کلیک = پالس + جرقه‌های بیشتر.</p>
+              <p>روی موبایل سبک‌ترش کردیم که روون‌تر باشه.</p>
             </div>
             <div class="card span6" id="card2">
               <h3>پارالاکس انیمه‌ای 👀</h3>
-              <p>ماوس/لمس رو حرکت بده تا سایه‌ی شخصیت‌ها نرم تکون بخورن.</p>
+              <p>آپدیت شد: فقط یک‌بار در هر فریم اجرا می‌شه (کم‌مصرف‌تر).</p>
             </div>
             <div class="card span4" id="card3">
               <h3>حالت امروز</h3>
-              <p>بین 😔 و 😼 و 😳 و 😎 تغییر بده و ببین هدر چه‌جوری می‌درخشه.</p>
+              <p>بین 😔 و 😼 و 😳 و 😎 تغییر بده.</p>
             </div>
             <div class="card span4" id="card4">
               <h3>حالت شب/نئون</h3>
-              <p>دکمه‌ی بالا سمت چپ رو بزن تا پالت رنگی عوض شه.</p>
+              <p>پالت رنگی عوض می‌شه، ولی سنگین نمی‌شه.</p>
             </div>
             <div class="card span4" id="card5">
-              <h3>تجربه‌ی نرم</h3>
-              <p>برای کسانی که حرکت کمتر می‌خوان، با تنظیمات سیستم احترام می‌ذاریم.</p>
+              <h3>بهینه‌سازی</h3>
+              <p>DPR محدود + سقف تعداد ذرات + FPS کمتر روی موبایل.</p>
             </div>
           </div>
         </div>
@@ -408,7 +371,27 @@
       toastTimer = setTimeout(()=>toastEl.classList.remove("show"), 2200);
     }
 
-    // --- Theme toggle (just tweaks CSS variables)
+    // --- Adaptive performance profile
+    const isSmall = matchMedia("(max-width: 640px)").matches;
+    const isMobileUA = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "");
+    const saveData = navigator.connection?.saveData === true;
+    const lowMem = (navigator.deviceMemory && navigator.deviceMemory <= 4);
+    const lowPower = isSmall || isMobileUA || saveData || lowMem;
+
+    // Cap DPR (huge win on mobile)
+    const DPR_CAP = lowPower ? 1.25 : 2;
+
+    // Target FPS (30 on lowPower devices)
+    const TARGET_FPS = lowPower ? 30 : 60;
+    const FRAME_MS = 1000 / TARGET_FPS;
+
+    // Max spark count
+    const MAX_SPARKS = lowPower ? 220 : 650;
+
+    // Ambient emission rate
+    const AMBIENT_INTERVAL_MS = lowPower ? 320 : 180;
+
+    // --- Theme toggle
     const themeBtn = document.getElementById("themeBtn");
     let altTheme = false;
     themeBtn.addEventListener("click", ()=>{
@@ -429,7 +412,6 @@
       moodIdx = (i + moods.length) % moods.length;
       const m = moods[moodIdx];
       moodText.textContent = `حالت: ${m}`;
-      // subtly shift glow based on mood
       const map = {
         "😔":["rgba(255,120,200,.55)","rgba(120,170,255,.45)"],
         "😼":["rgba(142,255,193,.55)","rgba(255,118,200,.40)"],
@@ -443,80 +425,118 @@
       document.documentElement.style.setProperty("--glow2", g2);
     }
 
-    // --- Sparkle canvas
+    // --- Sparkle canvas (optimized: DPR cap, pooling, swap-remove, optional glow pass)
     const canvas = document.getElementById("sparkCanvas");
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext("2d", { alpha: true });
+    let W=0,H=0, dpr=1;
+
     const sparks = [];
-    let W=0,H=0;
+    const pool = [];
 
     function resize(){
-      W = canvas.width = Math.floor(window.innerWidth * devicePixelRatio);
-      H = canvas.height = Math.floor(window.innerHeight * devicePixelRatio);
+      dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
+      W = canvas.width  = Math.floor(window.innerWidth  * dpr);
+      H = canvas.height = Math.floor(window.innerHeight * dpr);
+      canvas.style.width  = window.innerWidth + "px";
+      canvas.style.height = window.innerHeight + "px";
     }
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize", resize, {passive:true});
     resize();
 
+    function allocSpark(){
+      return pool.pop() || {x:0,y:0,vx:0,vy:0,life:0,size:0};
+    }
+
     function addSparks(x,y,count=24, burst=false){
+      // Clamp emission on lowPower devices
+      if (lowPower) count = Math.min(count, burst ? 45 : 12);
+
+      // Keep a hard cap
+      const room = MAX_SPARKS - sparks.length;
+      if (room <= 0) return;
+      count = Math.min(count, room);
+
+      const sx = x * dpr;
+      const sy = y * dpr;
+
       for(let i=0;i<count;i++){
         const a = Math.random()*Math.PI*2;
-        const sp = burst ? (2.2 + Math.random()*4.0) : (0.6 + Math.random()*2.2);
-        sparks.push({
-          x:x*devicePixelRatio,
-          y:y*devicePixelRatio,
-          vx: Math.cos(a)*sp*devicePixelRatio,
-          vy: Math.sin(a)*sp*devicePixelRatio,
-          life: 28 + Math.random()*26,
-          size: 1 + Math.random()*2.3
-        });
+        const sp = burst ? (2.0 + Math.random()*3.2) : (0.5 + Math.random()*1.8);
+        const s = allocSpark();
+        s.x = sx; s.y = sy;
+        s.vx = Math.cos(a)*sp*dpr;
+        s.vy = Math.sin(a)*sp*dpr;
+        s.life = 22 + Math.random()*22;
+        s.size = 1 + Math.random()*2.0;
+        sparks.push(s);
       }
     }
 
-    function loop(){
+    let lastFrameT = 0;
+    let ambientT = 0;
+
+    function loop(t){
+      requestAnimationFrame(loop);
+
+      // FPS limiter
+      if (t - lastFrameT < FRAME_MS) return;
+      const dt = t - lastFrameT;
+      lastFrameT = t;
+
       ctx.clearRect(0,0,W,H);
-      // draw
+
+      // ambient sparkle
+      ambientT += dt;
+      if (ambientT >= AMBIENT_INTERVAL_MS){
+        ambientT = 0;
+        addSparks(Math.random()*innerWidth, -10, 3, false);
+      }
+
+      // draw sparks
       for(let i=sparks.length-1;i>=0;i--){
         const s = sparks[i];
         s.x += s.vx;
         s.y += s.vy;
         s.vx *= 0.96;
-        s.vy = s.vy*0.96 + 0.02*devicePixelRatio;
+        s.vy = s.vy*0.96 + 0.02*dpr;
         s.life -= 1;
 
-        const alpha = Math.max(0, s.life/54);
+        const alpha = Math.max(0, s.life/44);
         ctx.globalAlpha = alpha;
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size*devicePixelRatio, 0, Math.PI*2);
+        ctx.arc(s.x, s.y, s.size*dpr, 0, Math.PI*2);
         ctx.fillStyle = "rgba(255,255,255,1)";
         ctx.fill();
 
-        // little glow
-        ctx.globalAlpha = alpha*0.35;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.size*4.2*devicePixelRatio, 0, Math.PI*2);
-        ctx.fillStyle = "rgba(255,118,200,1)";
-        ctx.fill();
+        // Optional glow pass (skip on lowPower for speed)
+        if (!lowPower){
+          ctx.globalAlpha = alpha*0.32;
+          ctx.beginPath();
+          ctx.arc(s.x, s.y, s.size*4.0*dpr, 0, Math.PI*2);
+          ctx.fillStyle = "rgba(255,118,200,1)";
+          ctx.fill();
+        }
 
-        if(s.life<=0) sparks.splice(i,1);
+        if(s.life<=0){
+          // swap-remove (fast)
+          const last = sparks.pop();
+          if (i < sparks.length) sparks[i] = last;
+          pool.push(s);
+        }
       }
       ctx.globalAlpha = 1;
-      requestAnimationFrame(loop);
     }
-    loop();
-
-    // gentle ambient sparkles
-    setInterval(()=>{
-      addSparks(Math.random()*innerWidth, -10, 3, false);
-    }, 180);
+    requestAnimationFrame(loop);
 
     // --- Buttons
-    document.getElementById("btnSpark").addEventListener("click", (e)=>{
-      addSparks(innerWidth/2, innerHeight/3, 90, true);
-      toast("بارون ستاره‌ای شروع شد ✨", "کمی امید توی هواست.");
+    document.getElementById("btnSpark").addEventListener("click", ()=>{
+      addSparks(innerWidth/2, innerHeight/3, lowPower ? 55 : 95, true);
+      toast("بارون ستاره‌ای ✨", lowPower ? "حالت موبایل: سبک‌تر شد." : "کمی امید توی هواست.");
     });
 
     document.getElementById("btnCheer").addEventListener("click", ()=>{
       setMood(moodIdx+1);
-      addSparks(innerWidth/2, innerHeight/2, 40, true);
+      addSparks(innerWidth/2, innerHeight/2, lowPower ? 28 : 42, true);
       toast("یه ذره بهتر شد 🌸", "حالت عوض شد!");
     });
 
@@ -535,7 +555,6 @@
         await navigator.clipboard.writeText(txt);
         toast("کپی شد 📋", "رفت توی کلیپ‌بورد.");
       }catch{
-        // fallback
         const ta = document.createElement("textarea");
         ta.value = txt;
         document.body.appendChild(ta);
@@ -546,43 +565,62 @@
       }
     });
 
-    // --- Click cards => pulse + sparks
+    // --- Click cards => pulse + sparks (lighter counts on mobile)
     document.querySelectorAll(".card").forEach(card=>{
-      card.addEventListener("click", (e)=>{
+      card.addEventListener("click", ()=>{
         const r = card.getBoundingClientRect();
-        addSparks(r.left + r.width*0.75, r.top + r.height*0.35, 26, true);
+        addSparks(r.left + r.width*0.75, r.top + r.height*0.35, lowPower ? 16 : 26, true);
         card.animate([
           { transform: "translateY(0) scale(1)", filter:"brightness(1)" },
-          { transform: "translateY(-3px) scale(1.01)", filter:"brightness(1.08)" },
+          { transform: "translateY(-3px) scale(1.01)", filter:"brightness(1.06)" },
           { transform: "translateY(0) scale(1)", filter:"brightness(1)" }
-        ], { duration: 380, easing: "cubic-bezier(.2,.8,.2,1)" });
-      });
+        ], { duration: 360, easing: "cubic-bezier(.2,.8,.2,1)" });
+      }, {passive:true});
     });
 
-    // --- Parallax for girls layer
+    // --- Parallax (throttled: only once per animation frame)
     const girlsLayer = document.getElementById("girlsLayer");
     const hero = document.getElementById("hero");
-    function parallax(clientX, clientY){
+    let pending = false;
+    let px = innerWidth/2, py = innerHeight/2;
+
+    function applyParallax(){
+      pending = false;
       const rect = hero.getBoundingClientRect();
-      const x = (clientX - (rect.left + rect.width/2)) / rect.width;
-      const y = (clientY - (rect.top + rect.height/2)) / rect.height;
-      const tx = x * 18;
-      const ty = y * 10;
+      const x = (px - (rect.left + rect.width/2)) / rect.width;
+      const y = (py - (rect.top + rect.height/2)) / rect.height;
+
+      // smaller movement on mobile
+      const tx = x * (lowPower ? 10 : 18);
+      const ty = y * (lowPower ? 6  : 10);
       girlsLayer.style.transform = `translate(${tx}px, ${ty}px)`;
     }
-    window.addEventListener("pointermove", (e)=> parallax(e.clientX, e.clientY), {passive:true});
+
+    function queueParallax(clientX, clientY){
+      px = clientX; py = clientY;
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(applyParallax);
+    }
+
+    window.addEventListener("pointermove", (e)=> queueParallax(e.clientX, e.clientY), {passive:true});
     window.addEventListener("touchmove", (e)=>{
       if(!e.touches?.length) return;
-      parallax(e.touches[0].clientX, e.touches[0].clientY);
+      queueParallax(e.touches[0].clientX, e.touches[0].clientY);
     }, {passive:true});
 
-    // Click anywhere => small spark
+    // Click anywhere => small spark (lighter on mobile)
     window.addEventListener("pointerdown", (e)=>{
-      addSparks(e.clientX, e.clientY, 18, true);
-    });
+      addSparks(e.clientX, e.clientY, lowPower ? 10 : 18, true);
+    }, {passive:true});
 
     // initial
     setMood(0);
+
+    // Inform (optional)
+    if (lowPower) {
+      toast("حالت موبایل فعال شد 📱", "انیمیشن‌ها سبک‌تر شدن.");
+    }
   </script>
 </body>
 </html>
