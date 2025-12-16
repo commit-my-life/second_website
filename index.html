@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>استاد فراتی</title>
+  <title>استاد فراتی تمدید کن</title>
   <style>
     :root{
       --bg1:#0b1023;
@@ -11,17 +11,19 @@
       --stroke: rgba(255,255,255,.14);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.70);
+      --a1:#ff76c8;
+      --a2:#7ab7ff;
+      --a3:#8effc1;
       --glow: rgba(255,120,200,.55);
       --glow2: rgba(120,170,255,.45);
-
-      /* performance knobs */
       --glass-blur: 14px;
       --shadow-hero: 0 24px 70px rgba(0,0,0,.35);
       --shadow-card: 0 24px 60px rgba(0,0,0,.28);
       --noise-opacity: .18;
       --ring-opacity: .55;
+      --ui-bg1: rgba(255,255,255,.10);
+      --ui-bg2: rgba(255,255,255,.06);
     }
-
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
@@ -35,7 +37,6 @@
         linear-gradient(135deg, var(--bg1), var(--bg2));
       overflow-x:hidden;
     }
-
     body::before{
       content:"";
       position:fixed; inset:0;
@@ -44,19 +45,17 @@
       opacity:var(--noise-opacity);
       pointer-events:none;
     }
-
-    /* Mobile performance: reduce blur/shadows/noise/ring intensity */
     @media (max-width: 640px){
       :root{
-        --glass-blur: 6px;        /* smaller blur = faster */
+        --glass-blur: 6px;
         --shadow-hero: 0 16px 44px rgba(0,0,0,.30);
         --shadow-card: 0 16px 40px rgba(0,0,0,.24);
         --noise-opacity: .10;
         --ring-opacity: .38;
+        --ui-bg1: rgba(255,255,255,.12);
+        --ui-bg2: rgba(255,255,255,.08);
       }
     }
-
-    /* Very low motion users */
     @media (prefers-reduced-motion: reduce){
       :root{ --ring-opacity: .18; }
     }
@@ -71,12 +70,19 @@
     .shell{ width:min(1050px, 100%); position:relative; }
 
     .topbar{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:14px; padding:10px 2px 18px; opacity:.92;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 2px 18px;
+      opacity:.94;
+      flex-wrap:wrap;
     }
 
     .badge{
-      display:inline-flex; align-items:center; gap:10px;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
       padding:10px 12px;
       border:1px solid var(--stroke);
       background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.05));
@@ -88,21 +94,51 @@
     }
     .dot{
       width:10px;height:10px;border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, white, rgba(255,118,200,.85));
+      background: radial-gradient(circle at 30% 30%, white, var(--a1));
       box-shadow: 0 0 18px var(--glow);
     }
-
+    .row{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
     .toggle{
-      cursor:pointer; border:none; color:var(--text);
-      font-weight:600; padding:10px 14px; border-radius:999px;
-      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      cursor:pointer;
+      border:none;
+      color:var(--text);
+      font-weight:800;
+      padding:10px 14px;
+      border-radius:999px;
+      background:linear-gradient(180deg, var(--ui-bg1), var(--ui-bg2));
       border:1px solid var(--stroke);
       -webkit-backdrop-filter: blur(var(--glass-blur));
       backdrop-filter: blur(var(--glass-blur));
-      transition: transform .12s ease, box-shadow .2s ease;
+      transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
+      position:relative;
+      overflow:hidden;
     }
-    .toggle:active{transform:scale(.98)}
-    .toggle:hover{box-shadow:0 0 0 1px rgba(255,255,255,.10), 0 10px 30px rgba(0,0,0,.25)}
+    .toggle:hover{ box-shadow:0 0 0 1px rgba(255,255,255,.10), 0 10px 30px rgba(0,0,0,.25); filter: brightness(1.05); }
+    .toggle:active{ transform:scale(.98); }
+
+    .mini{
+      cursor:pointer;
+      border:none;
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      backdrop-filter: blur(var(--glass-blur));
+      color:var(--text);
+      font-weight:900;
+      transition: transform .12s ease, filter .2s ease;
+      position:relative;
+      overflow:hidden;
+    }
+    .mini:active{ transform:scale(.98); }
+    .mini:hover{ filter:brightness(1.06); }
 
     .hero{
       border:1px solid var(--stroke);
@@ -113,9 +149,10 @@
       box-shadow: var(--shadow-hero);
       position:relative;
       overflow:hidden;
-      contain: layout paint; /* helps mobile browsers */
+      contain: layout paint;
+      transform: translateZ(0);
+      will-change: transform;
     }
-
     .hero::after{
       content:"";
       position:absolute; inset:-2px;
@@ -142,45 +179,56 @@
 
     .mainHeader{
       text-align:center;
-      margin: 8px auto 10px;
-      line-height:1.6;
-      font-weight:900;
+      margin: 6px auto 8px;
+      line-height:1.65;
+      font-weight:950;
       font-size: clamp(22px, 3.2vw, 40px);
-      text-shadow: 0 0 18px rgba(255,118,200,.30), 0 0 24px rgba(122,183,255,.20);
       user-select:none;
+      text-shadow:
+        0 0 18px rgba(255,118,200,.28),
+        0 0 24px rgba(122,183,255,.18);
       transform: translateZ(0);
       will-change: transform;
     }
     .mainHeader .handle{
       display:block;
       font-size: clamp(14px, 1.8vw, 18px);
-      font-weight:700;
+      font-weight:800;
       color:var(--muted);
       margin-top:6px;
     }
     .mainHeader .sub{
       display:block;
       font-size: clamp(14px, 2vw, 20px);
-      font-weight:800;
+      font-weight:900;
       margin-top:10px;
-      color: rgba(255,255,255,.86);
+      color: rgba(255,255,255,.88);
     }
 
     .controls{
-      display:flex; flex-wrap:wrap; justify-content:center;
-      gap:10px; padding:14px 0 10px;
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
+      padding:14px 0 10px;
     }
     .pill{
-      cursor:pointer; border:none;
-      padding:11px 14px; border-radius:999px;
+      cursor:pointer;
+      border:none;
+      padding:11px 14px;
+      border-radius:999px;
       color:var(--text);
-      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+      background:linear-gradient(180deg, var(--ui-bg1), var(--ui-bg2));
       border:1px solid var(--stroke);
       -webkit-backdrop-filter: blur(var(--glass-blur));
       backdrop-filter: blur(var(--glass-blur));
       transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
-      font-weight:700;
-      display:inline-flex; align-items:center; gap:8px;
+      font-weight:900;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      position:relative;
+      overflow:hidden;
     }
     .pill:hover{ box-shadow: 0 0 0 1px rgba(255,255,255,.10), 0 16px 40px rgba(0,0,0,.28); filter: brightness(1.06); }
     .pill:active{transform:scale(.98)}
@@ -202,12 +250,33 @@
       backdrop-filter: blur(var(--glass-blur));
       position:relative;
       overflow:hidden;
-      transition: transform .18s ease, box-shadow .25s ease;
+      transition: transform .18s ease, box-shadow .25s ease, filter .2s ease;
       contain: paint;
     }
-    .card:hover{ transform: translateY(-2px); box-shadow: var(--shadow-card); }
-    .card h3{ margin:0 0 6px; font-size:18px; }
-    .card p{ margin:0; color:var(--muted); line-height:1.7; font-size:14px; }
+    .card:hover{ transform: translateY(-2px); box-shadow: var(--shadow-card); filter:brightness(1.03); }
+    .card h3{ margin:0 0 6px; font-size:18px; letter-spacing:.2px; }
+    .card p{ margin:0; color:var(--muted); line-height:1.75; font-size:14px; white-space:pre-line; }
+    .meta{
+      margin-top:10px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
+      color:rgba(255,255,255,.76);
+      font-weight:800;
+      font-size:13px;
+    }
+    .chip{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+    }
+
     @media (min-width: 860px){
       .card.span6{grid-column: span 6}
       .card.span4{grid-column: span 4}
@@ -224,17 +293,18 @@
     }
     .girls svg{width:100%; height:100%}
     .girlGlow{
-      filter: drop-shadow(0 0 18px rgba(255,118,200,.25))
-              drop-shadow(0 0 18px rgba(122,183,255,.18));
+      filter: drop-shadow(0 0 18px rgba(255,118,200,.25)) drop-shadow(0 0 18px rgba(122,183,255,.18));
     }
     @media (max-width: 640px){
-      .girlGlow{ filter: none; } /* big win on some phones */
+      .girlGlow{ filter: none; }
     }
 
     #sparkCanvas{
       position:fixed; inset:0;
       z-index:2;
       pointer-events:none;
+      opacity:1;
+      transition: opacity .2s ease;
     }
 
     .toast{
@@ -251,11 +321,35 @@
       box-shadow: 0 20px 60px rgba(0,0,0,.35);
       opacity:0; transform: translateY(10px);
       transition: opacity .2s ease, transform .2s ease;
-      font-weight:700;
+      font-weight:900;
       color:rgba(255,255,255,.90);
     }
     .toast.show{opacity:1; transform: translateY(0)}
-    .toast small{display:block; margin-top:4px; font-weight:600; color:var(--muted)}
+    .toast small{display:block; margin-top:4px; font-weight:800; color:var(--muted)}
+
+    .ripple{
+      position:absolute;
+      border-radius:999px;
+      transform: translate(-50%,-50%) scale(0);
+      opacity:.65;
+      pointer-events:none;
+      background: radial-gradient(circle, rgba(255,255,255,.75), rgba(255,118,200,.20), transparent 60%);
+      animation: ripple .55s ease-out forwards;
+    }
+    @keyframes ripple{
+      to{ transform: translate(-50%,-50%) scale(18); opacity:0; }
+    }
+
+    body.low .hero,
+    body.low .card,
+    body.low .badge,
+    body.low .toggle,
+    body.low .pill,
+    body.low .mini,
+    body.low .toast{
+      -webkit-backdrop-filter:none !important;
+      backdrop-filter:none !important;
+    }
   </style>
 </head>
 <body>
@@ -265,11 +359,17 @@
     <div class="shell">
 
       <div class="topbar">
-        <div class="badge" title="حالت انرژی">
+        <div class="badge" title="حالت">
           <span class="dot" aria-hidden="true"></span>
           <span id="moodText">حالت: 😔</span>
         </div>
-        <button class="toggle" id="themeBtn" type="button">تغییر حال‌وهوا ✨</button>
+
+        <div class="row">
+          <button class="mini" id="pal1" type="button" aria-label="پالت ۱">💗</button>
+          <button class="mini" id="pal2" type="button" aria-label="پالت ۲">💙</button>
+          <button class="mini" id="pal3" type="button" aria-label="پالت ۳">💚</button>
+          <button class="toggle" id="themeBtn" type="button">تغییر فضا ✨</button>
+        </div>
       </div>
 
       <section class="hero" id="hero">
@@ -324,34 +424,37 @@
           </h1>
 
           <div class="controls">
-            <button class="pill" id="btnCheer" type="button"><span class="emoji">🌸</span> یه کم روحیه بده</button>
-            <button class="pill" id="btnSpark" type="button"><span class="emoji">✨</span> بارونِ ستاره‌ای</button>
-            <button class="pill" id="btnWink" type="button"><span class="emoji">😉</span> چشمک انیمه‌ای</button>
+            <button class="pill" id="btnMood" type="button"><span class="emoji">🎭</span> تغییر حالت</button>
+            <button class="pill" id="btnBurst" type="button"><span class="emoji">✨</span> درخشش</button>
+            <button class="pill" id="btnPulse" type="button"><span class="emoji">💫</span> ضربان</button>
+            <button class="pill" id="btnFx" type="button"><span class="emoji">⚡</span> افکت‌ها: روشن</button>
             <button class="pill" id="btnCopy" type="button"><span class="emoji">📋</span> کپی متن</button>
           </div>
 
           <div class="grid">
             <div class="card span6" id="card1">
-              <h3>کلیک کن تا واکنش ببینی 🎀</h3>
-              <p>روی موبایل سبک‌ترش کردیم که روون‌تر باشه.</p>
+              <h3>یک جمله‌ی تازه بساز 🎀</h3>
+              <p id="quoteText">روی کارت بزن تا متن عوض شود.</p>
+              <div class="meta">
+                <span class="chip" id="tapChip">تپ‌ها: 0</span>
+                <span class="chip" id="hintChip">نگه‌دار = درخشش بیشتر</span>
+              </div>
             </div>
+
             <div class="card span6" id="card2">
-              <h3>پارالاکس انیمه‌ای 👀</h3>
-              <p>آپدیت شد: فقط یک‌بار در هر فریم اجرا می‌شه (کم‌مصرف‌تر).</p>
+              <h3>شب یلدا 👀</h3>
+              <p>استاد فراتی
+@sforati
+تعلق گرفتن نمره امتیازی به همه به مناسبت شب یلدا در کمین است مگه نه؟😔</p>
+              <div class="meta">
+                <span class="chip" id="palChip">پالت: 💗</span>
+                <span class="chip" id="modeChip">حالت: 😔</span>
+              </div>
             </div>
-            <div class="card span4" id="card3">
-              <h3>حالت امروز</h3>
-              <p>بین 😔 و 😼 و 😳 و 😎 تغییر بده.</p>
-            </div>
-            <div class="card span4" id="card4">
-              <h3>حالت شب/نئون</h3>
-              <p>پالت رنگی عوض می‌شه، ولی سنگین نمی‌شه.</p>
-            </div>
-            <div class="card span4" id="card5">
-              <h3>بهینه‌سازی</h3>
-              <p>DPR محدود + سقف تعداد ذرات + FPS کمتر روی موبایل.</p>
-            </div>
+
+            
           </div>
+
         </div>
       </section>
 
@@ -361,7 +464,6 @@
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script>
-    // --- Toast helper
     const toastEl = document.getElementById("toast");
     let toastTimer = null;
     function toast(msg, sub=""){
@@ -371,87 +473,111 @@
       toastTimer = setTimeout(()=>toastEl.classList.remove("show"), 2200);
     }
 
-    // --- Adaptive performance profile
+    function ripple(el, ev){
+      const r = el.getBoundingClientRect();
+      const s = document.createElement("span");
+      s.className = "ripple";
+      const x = (ev?.clientX ?? (r.left + r.width/2)) - r.left;
+      const y = (ev?.clientY ?? (r.top + r.height/2)) - r.top;
+      s.style.left = x + "px";
+      s.style.top = y + "px";
+      s.style.width = Math.max(r.width, r.height) + "px";
+      s.style.height = Math.max(r.width, r.height) + "px";
+      el.appendChild(s);
+      setTimeout(()=>s.remove(), 650);
+    }
+
     const isSmall = matchMedia("(max-width: 640px)").matches;
     const isMobileUA = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent || "");
     const saveData = navigator.connection?.saveData === true;
     const lowMem = (navigator.deviceMemory && navigator.deviceMemory <= 4);
     const lowPower = isSmall || isMobileUA || saveData || lowMem;
+    if (lowPower) document.body.classList.add("low");
 
-    // Cap DPR (huge win on mobile)
     const DPR_CAP = lowPower ? 1.25 : 2;
-
-    // Target FPS (30 on lowPower devices)
     const TARGET_FPS = lowPower ? 30 : 60;
     const FRAME_MS = 1000 / TARGET_FPS;
-
-    // Max spark count
     const MAX_SPARKS = lowPower ? 220 : 650;
+    const AMBIENT_INTERVAL_MS = lowPower ? 340 : 190;
 
-    // Ambient emission rate
-    const AMBIENT_INTERVAL_MS = lowPower ? 320 : 180;
-
-    // --- Theme toggle
-    const themeBtn = document.getElementById("themeBtn");
-    let altTheme = false;
-    themeBtn.addEventListener("click", ()=>{
-      altTheme = !altTheme;
-      document.documentElement.style.setProperty("--bg1", altTheme ? "#070a14" : "#0b1023");
-      document.documentElement.style.setProperty("--bg2", altTheme ? "#201035" : "#1b1240");
-      document.documentElement.style.setProperty("--glow", altTheme ? "rgba(142,255,193,.55)" : "rgba(255,120,200,.55)");
-      document.documentElement.style.setProperty("--glow2", altTheme ? "rgba(255,118,200,.40)" : "rgba(120,170,255,.45)");
-      toast(altTheme ? "حالت: نئونِ شب 🌙✨" : "حالت: آسمونِ بنفش 💜", "پالت رنگی عوض شد.");
-    });
-
-    // --- Mood switching
-    const moodText = document.getElementById("moodText");
     const moods = ["😔","😼","😳","😎","🥲","🫠"];
     let moodIdx = 0;
+
+    const moodText = document.getElementById("moodText");
+    const modeChip = document.getElementById("modeChip");
 
     function setMood(i){
       moodIdx = (i + moods.length) % moods.length;
       const m = moods[moodIdx];
       moodText.textContent = `حالت: ${m}`;
+      modeChip.textContent = `حالت: ${m}`;
       const map = {
-        "😔":["rgba(255,120,200,.55)","rgba(120,170,255,.45)"],
-        "😼":["rgba(142,255,193,.55)","rgba(255,118,200,.40)"],
-        "😳":["rgba(255,255,255,.40)","rgba(255,118,200,.45)"],
-        "😎":["rgba(122,183,255,.55)","rgba(142,255,193,.35)"],
-        "🥲":["rgba(120,170,255,.55)","rgba(255,118,200,.35)"],
-        "🫠":["rgba(255,118,200,.55)","rgba(142,255,193,.35)"]
+        "😔":["rgba(255,120,200,.55)","rgba(120,170,255,.45)","#ff76c8","#7ab7ff","#8effc1"],
+        "😼":["rgba(142,255,193,.55)","rgba(255,118,200,.40)","#8effc1","#ff76c8","#7ab7ff"],
+        "😳":["rgba(255,255,255,.40)","rgba(255,118,200,.45)","#ffffff","#ff76c8","#7ab7ff"],
+        "😎":["rgba(122,183,255,.55)","rgba(142,255,193,.35)","#7ab7ff","#8effc1","#ff76c8"],
+        "🥲":["rgba(120,170,255,.55)","rgba(255,118,200,.35)","#7ab7ff","#ff76c8","#8effc1"],
+        "🫠":["rgba(255,118,200,.55)","rgba(142,255,193,.35)","#ff76c8","#8effc1","#7ab7ff"]
       };
-      const [g1,g2]= map[m] || map["😔"];
-      document.documentElement.style.setProperty("--glow", g1);
-      document.documentElement.style.setProperty("--glow2", g2);
+      const v = map[m] || map["😔"];
+      document.documentElement.style.setProperty("--glow", v[0]);
+      document.documentElement.style.setProperty("--glow2", v[1]);
+      document.documentElement.style.setProperty("--a1", v[2]);
+      document.documentElement.style.setProperty("--a2", v[3]);
+      document.documentElement.style.setProperty("--a3", v[4]);
     }
 
-    // --- Sparkle canvas (optimized: DPR cap, pooling, swap-remove, optional glow pass)
-    const canvas = document.getElementById("sparkCanvas");
-    const ctx = canvas.getContext("2d", { alpha: true });
-    let W=0,H=0, dpr=1;
+    let altTheme = false;
+    const themeBtn = document.getElementById("themeBtn");
+    themeBtn.addEventListener("click", (e)=>{
+      ripple(themeBtn, e);
+      altTheme = !altTheme;
+      document.documentElement.style.setProperty("--bg1", altTheme ? "#070a14" : "#0b1023");
+      document.documentElement.style.setProperty("--bg2", altTheme ? "#201035" : "#1b1240");
+      toast(altTheme ? "فضا: شب 🌙" : "فضا: بنفش 💜", "تغییر اعمال شد.");
+    });
 
+    const palChip = document.getElementById("palChip");
+    function setPalette(name, a1, a2, a3, glow, glow2){
+      document.documentElement.style.setProperty("--a1", a1);
+      document.documentElement.style.setProperty("--a2", a2);
+      document.documentElement.style.setProperty("--a3", a3);
+      document.documentElement.style.setProperty("--glow", glow);
+      document.documentElement.style.setProperty("--glow2", glow2);
+      palChip.textContent = `پالت: ${name}`;
+      toast(`پالت ${name}`, "رنگ‌ها تازه شدند.");
+      addSparks(innerWidth/2, innerHeight/3, lowPower ? 24 : 46, true);
+    }
+
+    document.getElementById("pal1").addEventListener("click", (e)=>{ ripple(e.currentTarget, e); setPalette("💗", "#ff76c8","#7ab7ff","#8effc1","rgba(255,120,200,.55)","rgba(120,170,255,.45)"); });
+    document.getElementById("pal2").addEventListener("click", (e)=>{ ripple(e.currentTarget, e); setPalette("💙", "#7ab7ff","#8effc1","#ff76c8","rgba(122,183,255,.55)","rgba(142,255,193,.40)"); });
+    document.getElementById("pal3").addEventListener("click", (e)=>{ ripple(e.currentTarget, e); setPalette("💚", "#8effc1","#ff76c8","#7ab7ff","rgba(142,255,193,.55)","rgba(255,118,200,.40)"); });
+
+    const canvas = document.getElementById("sparkCanvas");
+    const ctx = canvas.getContext("2d", { alpha:true });
+    let W=0,H=0,dpr=1;
     const sparks = [];
     const pool = [];
+    let fxOn = true;
+    let paused = document.hidden;
 
     function resize(){
       dpr = Math.min(window.devicePixelRatio || 1, DPR_CAP);
-      W = canvas.width  = Math.floor(window.innerWidth  * dpr);
+      W = canvas.width = Math.floor(window.innerWidth * dpr);
       H = canvas.height = Math.floor(window.innerHeight * dpr);
-      canvas.style.width  = window.innerWidth + "px";
+      canvas.style.width = window.innerWidth + "px";
       canvas.style.height = window.innerHeight + "px";
     }
     window.addEventListener("resize", resize, {passive:true});
     resize();
 
     function allocSpark(){
-      return pool.pop() || {x:0,y:0,vx:0,vy:0,life:0,size:0};
+      return pool.pop() || {x:0,y:0,vx:0,vy:0,life:0,size:0,t:0};
     }
 
     function addSparks(x,y,count=24, burst=false){
-      // Clamp emission on lowPower devices
-      if (lowPower) count = Math.min(count, burst ? 45 : 12);
-
-      // Keep a hard cap
+      if (!fxOn) return;
+      if (lowPower) count = Math.min(count, burst ? 48 : 12);
       const room = MAX_SPARKS - sparks.length;
       if (room <= 0) return;
       count = Math.min(count, room);
@@ -461,13 +587,14 @@
 
       for(let i=0;i<count;i++){
         const a = Math.random()*Math.PI*2;
-        const sp = burst ? (2.0 + Math.random()*3.2) : (0.5 + Math.random()*1.8);
+        const sp = burst ? (2.0 + Math.random()*3.0) : (0.5 + Math.random()*1.7);
         const s = allocSpark();
         s.x = sx; s.y = sy;
         s.vx = Math.cos(a)*sp*dpr;
         s.vy = Math.sin(a)*sp*dpr;
-        s.life = 22 + Math.random()*22;
+        s.life = 20 + Math.random()*22;
         s.size = 1 + Math.random()*2.0;
+        s.t = Math.random();
         sparks.push(s);
       }
     }
@@ -477,22 +604,19 @@
 
     function loop(t){
       requestAnimationFrame(loop);
-
-      // FPS limiter
+      if (paused || !fxOn) return;
       if (t - lastFrameT < FRAME_MS) return;
       const dt = t - lastFrameT;
       lastFrameT = t;
 
       ctx.clearRect(0,0,W,H);
 
-      // ambient sparkle
       ambientT += dt;
       if (ambientT >= AMBIENT_INTERVAL_MS){
         ambientT = 0;
         addSparks(Math.random()*innerWidth, -10, 3, false);
       }
 
-      // draw sparks
       for(let i=sparks.length-1;i>=0;i--){
         const s = sparks[i];
         s.x += s.vx;
@@ -503,22 +627,21 @@
 
         const alpha = Math.max(0, s.life/44);
         ctx.globalAlpha = alpha;
+
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.size*dpr, 0, Math.PI*2);
         ctx.fillStyle = "rgba(255,255,255,1)";
         ctx.fill();
 
-        // Optional glow pass (skip on lowPower for speed)
         if (!lowPower){
-          ctx.globalAlpha = alpha*0.32;
+          ctx.globalAlpha = alpha*0.28;
           ctx.beginPath();
-          ctx.arc(s.x, s.y, s.size*4.0*dpr, 0, Math.PI*2);
+          ctx.arc(s.x, s.y, s.size*3.6*dpr, 0, Math.PI*2);
           ctx.fillStyle = "rgba(255,118,200,1)";
           ctx.fill();
         }
 
         if(s.life<=0){
-          // swap-remove (fast)
           const last = sparks.pop();
           if (i < sparks.length) sparks[i] = last;
           pool.push(s);
@@ -528,59 +651,13 @@
     }
     requestAnimationFrame(loop);
 
-    // --- Buttons
-    document.getElementById("btnSpark").addEventListener("click", ()=>{
-      addSparks(innerWidth/2, innerHeight/3, lowPower ? 55 : 95, true);
-      toast("بارون ستاره‌ای ✨", lowPower ? "حالت موبایل: سبک‌تر شد." : "کمی امید توی هواست.");
+    document.addEventListener("visibilitychange", ()=>{
+      paused = document.hidden;
+      if (!paused) lastFrameT = 0;
     });
 
-    document.getElementById("btnCheer").addEventListener("click", ()=>{
-      setMood(moodIdx+1);
-      addSparks(innerWidth/2, innerHeight/2, lowPower ? 28 : 42, true);
-      toast("یه ذره بهتر شد 🌸", "حالت عوض شد!");
-    });
-
-    document.getElementById("btnWink").addEventListener("click", ()=>{
-      const h = document.getElementById("mainHeader");
-      h.style.transform = "scale(1.02) rotate(-0.6deg)";
-      h.style.transition = "transform .18s ease";
-      setTimeout(()=>h.style.transform="", 200);
-      setMood(moodIdx+1);
-      toast("چشمک انیمه‌ای 😉", "گفتیم شاید تمدید… نباشه؟");
-    });
-
-    document.getElementById("btnCopy").addEventListener("click", async ()=>{
-      const txt = `استاد فراتی\n@sforati \nتمدید در کمین است مگه نه؟😔`;
-      try{
-        await navigator.clipboard.writeText(txt);
-        toast("کپی شد 📋", "رفت توی کلیپ‌بورد.");
-      }catch{
-        const ta = document.createElement("textarea");
-        ta.value = txt;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand("copy");
-        ta.remove();
-        toast("کپی شد 📋", "با روش جایگزین.");
-      }
-    });
-
-    // --- Click cards => pulse + sparks (lighter counts on mobile)
-    document.querySelectorAll(".card").forEach(card=>{
-      card.addEventListener("click", ()=>{
-        const r = card.getBoundingClientRect();
-        addSparks(r.left + r.width*0.75, r.top + r.height*0.35, lowPower ? 16 : 26, true);
-        card.animate([
-          { transform: "translateY(0) scale(1)", filter:"brightness(1)" },
-          { transform: "translateY(-3px) scale(1.01)", filter:"brightness(1.06)" },
-          { transform: "translateY(0) scale(1)", filter:"brightness(1)" }
-        ], { duration: 360, easing: "cubic-bezier(.2,.8,.2,1)" });
-      }, {passive:true});
-    });
-
-    // --- Parallax (throttled: only once per animation frame)
-    const girlsLayer = document.getElementById("girlsLayer");
     const hero = document.getElementById("hero");
+    const girlsLayer = document.getElementById("girlsLayer");
     let pending = false;
     let px = innerWidth/2, py = innerHeight/2;
 
@@ -589,11 +666,14 @@
       const rect = hero.getBoundingClientRect();
       const x = (px - (rect.left + rect.width/2)) / rect.width;
       const y = (py - (rect.top + rect.height/2)) / rect.height;
-
-      // smaller movement on mobile
       const tx = x * (lowPower ? 10 : 18);
-      const ty = y * (lowPower ? 6  : 10);
+      const ty = y * (lowPower ? 6 : 10);
       girlsLayer.style.transform = `translate(${tx}px, ${ty}px)`;
+      if (!lowPower){
+        const rx = (-y) * 2.0;
+        const ry = (x) * 2.0;
+        hero.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+      }
     }
 
     function queueParallax(clientX, clientY){
@@ -609,18 +689,155 @@
       queueParallax(e.touches[0].clientX, e.touches[0].clientY);
     }, {passive:true});
 
-    // Click anywhere => small spark (lighter on mobile)
-    window.addEventListener("pointerdown", (e)=>{
-      addSparks(e.clientX, e.clientY, lowPower ? 10 : 18, true);
+    if (!lowPower){
+      let trailT = 0;
+      window.addEventListener("pointermove", (e)=>{
+        const now = performance.now();
+        if (now - trailT < 55) return;
+        trailT = now;
+        addSparks(e.clientX, e.clientY, 4, false);
+      }, {passive:true});
+    }
+
+    let pressTimer = null;
+    let pressing = false;
+
+    function startPress(x,y){
+      if (!fxOn) return;
+      pressing = true;
+      const sx = x, sy = y;
+      pressTimer = setTimeout(()=>{
+        if (!pressing) return;
+        addSparks(sx, sy, lowPower ? 26 : 44, true);
+        if (navigator.vibrate) navigator.vibrate(18);
+      }, lowPower ? 520 : 420);
+    }
+    function endPress(x,y){
+      pressing = false;
+      clearTimeout(pressTimer);
+      addSparks(x, y, lowPower ? 12 : 18, true);
+    }
+
+    window.addEventListener("pointerdown", (e)=> startPress(e.clientX, e.clientY), {passive:true});
+    window.addEventListener("pointerup", (e)=> endPress(e.clientX, e.clientY), {passive:true});
+    window.addEventListener("pointercancel", ()=>{ pressing=false; clearTimeout(pressTimer); }, {passive:true});
+
+    const btnMood = document.getElementById("btnMood");
+    const btnBurst = document.getElementById("btnBurst");
+    const btnPulse = document.getElementById("btnPulse");
+    const btnFx = document.getElementById("btnFx");
+    const btnCopy = document.getElementById("btnCopy");
+
+    function bindRipple(btn){
+      btn.addEventListener("click", (e)=> ripple(btn, e));
+    }
+    [btnMood, btnBurst, btnPulse, btnFx, btnCopy].forEach(bindRipple);
+    [themeBtn, document.getElementById("pal1"), document.getElementById("pal2"), document.getElementById("pal3")].forEach(bindRipple);
+
+    btnMood.addEventListener("click", ()=>{
+      setMood(moodIdx+1);
+      addSparks(innerWidth/2, innerHeight/2, lowPower ? 18 : 34, true);
+      toast("حالت عوض شد 🎭", "یه رنگ تازه!");
+    });
+
+    btnBurst.addEventListener("click", ()=>{
+      addSparks(innerWidth/2, innerHeight/3, lowPower ? 48 : 92, true);
+      toast("درخشش ✨", lowPower ? "سبک و روان" : "پرنور و زنده");
+    });
+
+    let pulsing = false;
+    let pulseInt = null;
+    btnPulse.addEventListener("click", ()=>{
+      pulsing = !pulsing;
+      if (pulsing){
+        toast("ضربان فعال 💫", "برای خاموش کردن دوباره بزن.");
+        pulseInt = setInterval(()=>{
+          if (!fxOn || paused) return;
+          addSparks(innerWidth/2, innerHeight*0.30, lowPower ? 8 : 14, true);
+        }, lowPower ? 520 : 360);
+      } else {
+        clearInterval(pulseInt);
+        toast("ضربان خاموش شد 💫");
+      }
+    });
+
+    btnFx.addEventListener("click", ()=>{
+      fxOn = !fxOn;
+      canvas.style.opacity = fxOn ? "1" : "0";
+      btnFx.innerHTML = fxOn ? '<span class="emoji">⚡</span> افکت‌ها: روشن' : '<span class="emoji">⚡</span> افکت‌ها: خاموش';
+      if (!fxOn){
+        sparks.length = 0;
+        toast("افکت‌ها خاموش شد ⚡", "اجرای سبک‌تر");
+      } else {
+        toast("افکت‌ها روشن شد ⚡", "آماده‌ی درخشش");
+        addSparks(innerWidth/2, innerHeight/3, lowPower ? 16 : 28, true);
+      }
+    });
+
+    btnCopy.addEventListener("click", async ()=>{
+      const txt = `استاد فراتی\n@sforati \nتمدید در کمین است مگه نه؟😔`;
+      try{
+        await navigator.clipboard.writeText(txt);
+        toast("کپی شد 📋", "رفت توی کلیپ‌بورد.");
+      }catch{
+        const ta = document.createElement("textarea");
+        ta.value = txt;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        ta.remove();
+        toast("کپی شد 📋");
+      }
+    });
+
+    const tapChip = document.getElementById("tapChip");
+    const quoteText = document.getElementById("quoteText");
+    const card1 = document.getElementById("card1");
+    let taps = 0;
+
+    const quotes = [
+      "امروز تمدید… نزدیک‌تر از همیشه‌ست 😔",
+      "یه نمره‌ی اضافه، یه لبخند اضافه 🙂",
+      "اگر تمدید شد… قول می‌دیم بیشتر بخونیم 😅",
+      "یلدا بهانه‌ست… مهربونی اصلیه ✨",
+      "نمره‌ی امتیازی در کمینه… شاید 😶",
+      "هر چی باشه، امید روشنه 🌙"
+    ];
+    function nextQuote(){
+      const q = quotes[Math.floor(Math.random()*quotes.length)];
+      quoteText.textContent = q;
+    }
+
+    card1.addEventListener("click", (e)=>{
+      ripple(card1, e);
+      taps += 1;
+      tapChip.textContent = `تپ‌ها: ${taps}`;
+      nextQuote();
+      addSparks(innerWidth/2, innerHeight/2, lowPower ? 10 : 18, true);
+      card1.animate([
+        { transform:"translateY(0) scale(1)" },
+        { transform:"translateY(-3px) scale(1.01)" },
+        { transform:"translateY(0) scale(1)" }
+      ], { duration: 340, easing:"cubic-bezier(.2,.8,.2,1)" });
     }, {passive:true});
 
-    // initial
-    setMood(0);
+    document.querySelectorAll(".card").forEach(card=>{
+      if (card === card1) return;
+      card.addEventListener("click", (e)=>{
+        ripple(card, e);
+        const r = card.getBoundingClientRect();
+        addSparks(r.left + r.width*0.70, r.top + r.height*0.35, lowPower ? 10 : 16, true);
+        card.animate([
+          { transform:"translateY(0) scale(1)" },
+          { transform:"translateY(-2px) scale(1.008)" },
+          { transform:"translateY(0) scale(1)" }
+        ], { duration: 320, easing:"cubic-bezier(.2,.8,.2,1)" });
+      }, {passive:true});
+    });
 
-    // Inform (optional)
-    if (lowPower) {
-      toast("حالت موبایل فعال شد 📱", "انیمیشن‌ها سبک‌تر شدن.");
-    }
+    setMood(0);
+    nextQuote();
+    if (lowPower) toast("حالت سبک فعال شد 📱", "روان‌تر روی موبایل");
   </script>
 </body>
 </html>
